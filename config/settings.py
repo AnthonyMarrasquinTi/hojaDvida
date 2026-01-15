@@ -1,7 +1,5 @@
 from pathlib import Path
 import os
-import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
 
 # =========================================================
 # BASE
@@ -20,10 +18,14 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,anthonymarrasquinhoja.onrender.com"
-).split(",")
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "anthonymarrasquinhoja.onrender.com",
+]
+
+if DEBUG:
+    ALLOWED_HOSTS.append("*")
 
 # =========================================================
 # APPLICATIONS
@@ -88,11 +90,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # =========================================================
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=not DEBUG,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 # =========================================================
@@ -131,17 +132,13 @@ if DEBUG:
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # =========================================================
-# AZURE BLOB STORAGE (SEGURO)
+# AZURE BLOB STORAGE (OPCIONAL)
 # =========================================================
 
 AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER", "certificados")
 
-if AZURE_STORAGE_CONNECTION_STRING is None:
-    if not DEBUG:
-        raise ImproperlyConfigured(
-            "AZURE_STORAGE_CONNECTION_STRING no está configurada en producción"
-        )
+# Azure es opcional - la app funciona sin él
 
 # =========================================================
 # DEFAULT PRIMARY KEY
