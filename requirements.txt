@@ -1,6 +1,7 @@
 # Django and core dependencies
 Django>=4.2,<5.0
 django-environ>=0.11
+dj-database-url==2.1.0
 
 # PDF generation
 WeasyPrint>=61,<63

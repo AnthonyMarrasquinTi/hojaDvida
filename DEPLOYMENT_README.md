@@ -13,8 +13,8 @@ Configura estas variables en el dashboard de Render:
 - `AZURE_STORAGE_CONNECTION_STRING`: Connection string de Azure Storage
 - `AZURE_STORAGE_CONTAINER`: Nombre del contenedor (default: `certificados`)
 
-### Base de Datos (Futuro)
-- `DATABASE_URL`: URL de PostgreSQL (opcional, por ahora usa SQLite)
+### Base de Datos
+- `DATABASE_URL`: URL de PostgreSQL (automáticamente detectada en producción)
 
 ## 📁 Archivos Creados/Modificados
 
@@ -58,8 +58,9 @@ Configura estas variables en el dashboard de Render:
 - ✅ Connection string válida
 
 ### 5. Base de datos
-- ✅ SQLite funciona out-of-the-box
-- ✅ Preparado para PostgreSQL en el futuro
+- ✅ SQLite funciona out-of-the-box en desarrollo
+- ✅ PostgreSQL automático en producción (via DATABASE_URL)
+- ✅ Migraciones se ejecutan automáticamente en deploy
 
 ## 🔍 Verificación Post-Despliegue
 
