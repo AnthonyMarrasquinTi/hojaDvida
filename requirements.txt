@@ -1,15 +1,12 @@
 # Django and core dependencies
-Django==6.0.1
-django-environ==0.11.2
-
-# Database (SQLite for now, ready for PostgreSQL)
-# psycopg2-binary==2.9.7  # Uncomment for PostgreSQL
+Django>=4.2,<5.0
+django-environ>=0.11
 
 # PDF generation
-WeasyPrint==61.2
+WeasyPrint>=61,<63
 
 # Image processing
-Pillow==10.2.0
+Pillow>=10.0,<11.0
 
 # Azure Blob Storage
 azure-storage-blob==12.19.0
