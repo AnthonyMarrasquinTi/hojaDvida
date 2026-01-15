@@ -1,10 +1,18 @@
 services:
+  # PostgreSQL Database
+  - type: pserv
+    name: cv-postgres
+    runtime: postgres
+    ipAllowList: []  # Only accessible by other services
+
+  # Django Web Application
   - type: web
     name: cv-django-app
     runtime: python
-    runtimeVersion: "3.11.9"
+    runtimeVersion: "3.12.4"
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 30"
+    preDeployCommand: "python manage.py migrate && python manage.py collectstatic --noinput"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
@@ -17,3 +25,8 @@ services:
           type: web
           name: cv-django-app
           property: host
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: cv-postgres
+          property: connectionString
