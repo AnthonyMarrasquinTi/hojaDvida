@@ -2,7 +2,7 @@ services:
   - type: web
     name: cv-django-app
     runtime: python
-    runtimeVersion: "3.12.4"
+    runtimeVersion: "3.13"
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
