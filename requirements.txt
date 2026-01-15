@@ -3,6 +3,9 @@ Django>=4.2,<5.0
 django-environ>=0.11
 dj-database-url==2.1.0
 
+# Database
+psycopg2-binary==2.9.9
+
 # PDF generation
 WeasyPrint>=61,<63
 
