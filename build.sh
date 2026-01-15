@@ -26,3 +26,4 @@ python manage.py collectstatic --noinput --clear
 python manage.py migrate
 
 echo "Build completed successfully!"
+
