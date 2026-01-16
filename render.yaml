@@ -1,9 +1,10 @@
 services:
   - type: web
     name: cv-django-app
-    runtime: python3
+    runtime: python
+    runtimeVersion: "3.13"
     buildCommand: "./build.sh"
-    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 30"
+    startCommand: "gunicorn config.wsgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
@@ -11,8 +12,3 @@ services:
         generateValue: true
       - key: DEBUG
         value: false
-      - key: ALLOWED_HOSTS
-        fromService:
-          type: web
-          name: cv-django-app
-          property: host

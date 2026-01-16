@@ -2,19 +2,17 @@
 
 ## 📋 Variables de Entorno Requeridas
 
-Configura estas variables en el dashboard de Render:
+**IMPORTANTE**: Con `render.yaml`, Render configura automáticamente la mayoría de las variables. Solo necesitas configurar Azure si usas Blob Storage.
 
-### Django Configuration
-- `SECRET_KEY`: Clave secreta de Django (generada automáticamente por Render)
-- `DEBUG`: `False`
-- `ALLOWED_HOSTS`: Tu dominio en Render (ej: `tu-app.onrender.com`)
+### Variables que Render configura automáticamente:
+- `DATABASE_URL`: PostgreSQL database (configurado automáticamente)
+- `SECRET_KEY`: Generada automáticamente
+- `DEBUG`: `False` (configurado en render.yaml)
+- `ALLOWED_HOSTS`: Tu dominio (configurado automáticamente)
 
-### Azure Blob Storage
+### Variables que debes configurar manualmente (solo si usas Azure):
 - `AZURE_STORAGE_CONNECTION_STRING`: Connection string de Azure Storage
 - `AZURE_STORAGE_CONTAINER`: Nombre del contenedor (default: `certificados`)
-
-### Base de Datos (Futuro)
-- `DATABASE_URL`: URL de PostgreSQL (opcional, por ahora usa SQLite)
 
 ## 📁 Archivos Creados/Modificados
 
@@ -29,37 +27,54 @@ Configura estas variables en el dashboard de Render:
 
 ## 🚀 Pasos de Despliegue
 
-1. **Sube tu código a GitHub**
-2. **Conecta Render con tu repo**
-3. **Configura las variables de entorno** (ver arriba)
-4. **Render ejecutará automáticamente:**
-   - `build.sh` (instala dependencias del sistema)
+1. **Sube tu código a GitHub** (asegúrate de que `render.yaml` esté en la raíz)
+2. **En Render Dashboard:**
+   - Ve a "New" → "Blueprint" (no "Web Service")
+   - Conecta tu repositorio de GitHub
+   - Render detectará automáticamente `render.yaml`
+3. **Render creará automáticamente:**
+   - PostgreSQL database
+   - Web service con Python 3.12.4
+4. **Configura solo Azure** (si usas Blob Storage)
+5. **Deploy** - Render ejecutará automáticamente:
+   - `build.sh` (dependencias del sistema)
    - `pip install -r requirements.txt`
-   - `python manage.py collectstatic`
-   - `python manage.py migrate`
+   - `python manage.py migrate` (pre-deploy)
+   - `python manage.py collectstatic` (pre-deploy)
    - Inicia con gunicorn
 
 ## ⚠️ Errores Comunes y Soluciones
 
-### 1. WeasyPrint no funciona
+### 1. Python version error
+- ✅ Usa Python 3.12.4 (NO 3.13 que causa problemas con psycopg2)
+- ✅ `runtime.txt` y `render.yaml` especifican versión exacta
+- ✅ `psycopg2-binary==2.9.9` compatible con Python 3.12
+
+### 2. PostgreSQL connection error
+- ✅ `psycopg2-binary==2.9.9` incluido en requirements.txt
+- ✅ `DATABASE_URL` configurada automáticamente por Render
+- ✅ `dj-database-url` maneja la conexión correctamente
+
+### 3. WeasyPrint no funciona
 - ✅ `build.sh` instala todas las dependencias del sistema
 - ✅ Incluye `libcairo2`, `libpango`, etc.
 
-### 2. Archivos estáticos no cargan
+### 4. Archivos estáticos no cargan
 - ✅ WhiteNoise está configurado en `settings.py`
-- ✅ `collectstatic` se ejecuta en el build
+- ✅ `collectstatic` se ejecuta en pre-deploy
 
-### 3. PDFs no se generan
+### 5. PDFs no se generan
 - ✅ Todas las dependencias están en `requirements.txt`
 - ✅ Build script instala dependencias del sistema
 
-### 4. Azure Storage no conecta
+### 6. Azure Storage no conecta
 - ✅ Variables de entorno configuradas correctamente
 - ✅ Connection string válida
 
-### 5. Base de datos
-- ✅ SQLite funciona out-of-the-box
-- ✅ Preparado para PostgreSQL en el futuro
+### 7. Base de datos
+- ✅ SQLite automático en desarrollo (sin DATABASE_URL)
+- ✅ PostgreSQL automático en producción (via DATABASE_URL)
+- ✅ Migraciones se ejecutan automáticamente en pre-deploy
 
 ## 🔍 Verificación Post-Despliegue
 

@@ -84,7 +84,28 @@ def get_pdf_css():
 
 
 def hoja_vida_publica(request):
-    perfil = get_object_or_404(DatosPersonales, perfilactivo=1)
+    perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+    if not perfil:
+        # Create default profile if none exists with all required fields
+        from datetime import date
+        perfil = DatosPersonales.objects.create(
+            nombres="Perfil",
+            apellidos="Predeterminado",
+            descripcionperfil="Perfil por defecto",
+            perfilactivo=1,
+            nacionalidad="Colombia",
+            lugarnacimiento="Bogotá",
+            fechanacimiento=date.today(),
+            numerocedula="1234567890",
+            sexo="H",
+            estadocivil="Soltero",
+            licenciaconducir="B1",
+            telefonoconvencional="3001234567",
+            telefonofijo="6012345678",
+            direcciontrabajo="Calle 123",
+            direcciondomiciliaria="Carrera 456",
+            sitioweb="https://example.com"
+        )
 
     # Obtain active experiences for the profile and group them by company.
     experiencias_qs = ExperienciaLaboral.objects.filter(
@@ -163,7 +184,33 @@ def hoja_vida_publica(request):
 
 def descargar_cv_pdf(request):
     """Generate a PDF of the public CV using the new professional template."""
-    perfil = get_object_or_404(DatosPersonales, perfilactivo=1)
+    from django.http import HttpResponse
+
+    perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+    if not perfil:
+        # Create default profile if none exists with all required fields
+        from datetime import date
+        try:
+            perfil = DatosPersonales.objects.create(
+                nombres="Perfil",
+                apellidos="Predeterminado",
+                descripcionperfil="Perfil por defecto",
+                perfilactivo=1,
+                nacionalidad="Colombia",
+                lugarnacimiento="Bogotá",
+                fechanacimiento=date.today(),
+                numerocedula="1234567890",
+                sexo="H",
+                estadocivil="Soltero",
+                licenciaconducir="B1",
+                telefonoconvencional="3001234567",
+                telefonofijo="6012345678",
+                direcciontrabajo="Calle 123",
+                direcciondomiciliaria="Carrera 456",
+                sitioweb="https://example.com"
+            )
+        except Exception as e:
+            return HttpResponse(f'Error creando perfil: {str(e)}', status=500)
 
     experiencias_qs = ExperienciaLaboral.objects.filter(
         idperfilconqueestaactivo=perfil,
@@ -240,8 +287,8 @@ def descargar_cv_pdf(request):
         pdf_bytes = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf(
             stylesheets=[CSS(string=css_text)]
         )
-    except Exception:
-        return HttpResponse('Error generating PDF', status=500)
+    except Exception as e:
+        return HttpResponse(f'Error generating PDF: {str(e)}', status=500)
 
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="hoja_de_vida.pdf"'
@@ -250,11 +297,37 @@ def descargar_cv_pdf(request):
 
 def descargar_cv_completo_pdf(request):
     """Generate a professional PDF with CV and embedded certificates (Check All)."""
+    from django.http import HttpResponse
     from django.urls import reverse
     from apps.trayectoria.views import _download_blob_from_url
     from pypdf import PdfReader, PdfWriter
-    
-    perfil = get_object_or_404(DatosPersonales, perfilactivo=1)
+
+    perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+    if not perfil:
+        # Create default profile if none exists with all required fields
+        from datetime import date
+        try:
+            perfil = DatosPersonales.objects.create(
+                nombres="Perfil",
+                apellidos="Predeterminado",
+                descripcionperfil="Perfil por defecto",
+                perfilactivo=1,
+                nacionalidad="Colombia",
+                lugarnacimiento="Bogotá",
+                fechanacimiento=date.today(),
+                numerocedula="1234567890",
+                sexo="H",
+                estadocivil="Soltero",
+                licenciaconducir="B1",
+                telefonoconvencional="3001234567",
+                telefonofijo="6012345678",
+                direcciontrabajo="Calle 123",
+                direcciondomiciliaria="Carrera 456",
+                sitioweb="https://example.com"
+            )
+        except Exception as e:
+            from django.http import HttpResponse
+            return HttpResponse(f'Error creando perfil: {str(e)}', status=500)
 
     experiencias_qs = ExperienciaLaboral.objects.filter(
         idperfilconqueestaactivo=perfil,
@@ -508,7 +581,32 @@ from apps.trayectoria.views import _download_blob_from_url
 
 def ver_foto_perfil(request):
     """Proxy view to serve the profile photo from Azure without exposing the blob URL."""
-    perfil = get_object_or_404(DatosPersonales, perfilactivo=1)
+    perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+    if not perfil:
+        # Create default profile if none exists with all required fields
+        from datetime import date
+        try:
+            perfil = DatosPersonales.objects.create(
+                nombres="Perfil",
+                apellidos="Predeterminado",
+                descripcionperfil="Perfil por defecto",
+                perfilactivo=1,
+                nacionalidad="Colombia",
+                lugarnacimiento="Bogotá",
+                fechanacimiento=date.today(),
+                numerocedula="1234567890",
+                sexo="H",
+                estadocivil="Soltero",
+                licenciaconducir="B1",
+                telefonoconvencional="3001234567",
+                telefonofijo="6012345678",
+                direcciontrabajo="Calle 123",
+                direcciondomiciliaria="Carrera 456",
+                sitioweb="https://example.com"
+            )
+        except Exception as e:
+            from django.http import HttpResponse
+            return HttpResponse(f'Error creando perfil: {str(e)}', status=500)
     blob_url = getattr(perfil, 'foto_perfil_url', None)
     if not blob_url:
         return HttpResponse('No profile photo available.', status=404)
